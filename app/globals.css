@@ -2,20 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Import pixel font */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+}
+
+/* Pixel art styles */
+.pixel-font {
+  font-family: 'Press Start 2P', cursive;
+  letter-spacing: 0.1em;
+}
+
+.pixel-title {
+  text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.5),
+    0 0 20px rgba(0, 255, 255, 0.3),
+    0 0 30px rgba(0, 255, 255, 0.2);
+  image-rendering: pixelated;
+}
+
+.pixel-text {
+  image-rendering: pixelated;
+}
+
+.pixel-box {
+  position: relative;
+  border: 4px solid;
+  image-rendering: pixelated;
+  transition: all 0.2s ease;
+}
+
+.pixel-box::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.pixel-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.3),
+    0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.pixel-card {
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  image-rendering: pixelated;
+  transition: all 0.3s ease;
+}
+
+.pixel-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pixel-title {
+    font-size: 2.5rem;
+  }
+  
+  .pixel-text {
+    font-size: 1rem;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }

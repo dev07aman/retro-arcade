@@ -1,101 +1,106 @@
-import Image from "next/image";
+"use client"
+import { useState } from 'react';
+import { FaGamepad, FaMicrophone, FaTrophy, FaPlus, FaSignInAlt } from 'react-icons/fa';
+import dynamic from 'next/dynamic';
+import TournamentBracket from '../components/TournamentBracket/TournamentBracket';
+import Link from 'next/link';
+
+// Dynamically import GameCanvas
+const GameCanvas = dynamic(() => import('../components/GameCanvas/GameCanvas'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full max-w-4xl mx-auto aspect-video bg-gray-800 rounded-lg flex items-center justify-center">
+      <div className="text-gray-400">Loading game...</div>
+    </div>
+  )
+});
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [roomId, setRoomId] = useState('');
+  const [isJoined, setIsJoined] = useState(false);
+  const [tournament, setTournament] = useState(null);
+  const [gameMode, setGameMode] = useState(null); // 'create' or 'join'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const games = [
+    { id: 'pong', name: 'Pong' }
+  ];
+
+  // Generate a random 5-digit room ID
+  const generateRoomId = () => {
+    const roomId = Math.floor(10000 + Math.random() * 90000).toString();
+    setRoomId(roomId);
+    return roomId;
+  };
+
+  const handleCreateRoom = () => {
+    if (selectedGame) {
+      setGameMode('create');
+      generateRoomId();
+      setIsJoined(true);
+    }
+  };
+
+  const handleJoinRoom = () => {
+    if (selectedGame && roomId.length === 5) {
+      setGameMode('join');
+      setIsJoined(true);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pixel-font">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h1 className="text-6xl mb-8 pixel-title animate-pulse">
+          RETRO PONG
+        </h1>
+        <p className="text-xl mb-12 text-green-400 pixel-text">
+          A Classic Reimagined for the Modern Web
+        </p>
+        
+        {/* Game Modes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto mb-16">
+          <Link href="/create-game" 
+                className="pixel-box bg-blue-600 hover:bg-blue-700 p-6 rounded transition-transform transform hover:scale-105">
+            <h2 className="text-2xl mb-2">Create Game</h2>
+            <p className="text-sm text-blue-200">Host a new game and invite friends</p>
+          </Link>
+          
+          <Link href="/join-game"
+                className="pixel-box bg-purple-600 hover:bg-purple-700 p-6 rounded transition-transform transform hover:scale-105">
+            <h2 className="text-2xl mb-2">Join Game</h2>
+            <p className="text-sm text-purple-200">Enter a room code to join</p>
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="pixel-card p-4">
+            <h3 className="text-xl mb-2 text-yellow-400">Real-time Multiplayer</h3>
+            <p className="text-sm">Challenge your friends in fast-paced matches</p>
+          </div>
+          <div className="pixel-card p-4">
+            <h3 className="text-xl mb-2 text-yellow-400">Retro Graphics</h3>
+            <p className="text-sm">Experience the classic arcade feel</p>
+          </div>
+          <div className="pixel-card p-4">
+            <h3 className="text-xl mb-2 text-yellow-400">Global Leaderboard</h3>
+            <p className="text-sm">Compete for the top spot</p>
+          </div>
+        </div>
+
+        {/* How to Play */}
+        <div className="max-w-2xl mx-auto text-left pixel-card p-6">
+          <h2 className="text-2xl mb-4 text-center text-yellow-400">How to Play</h2>
+          <ul className="space-y-2 text-green-300">
+            <li>⬆️ Use Up Arrow to move paddle up</li>
+            <li>⬇️ Use Down Arrow to move paddle down</li>
+            <li>🏆 First to 5 points wins!</li>
+            <li>🤝 Share your room code with friends to play</li>
+          </ul>
+        </div>
+      </div>
+    </main>
   );
 }
